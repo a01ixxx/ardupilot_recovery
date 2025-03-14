@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cp gps_data.txt /tmp/
+
 tmux kill-session -t "geck_recovery_block"
 
 # Name of the tmux session
@@ -68,12 +70,13 @@ sleep 30
 
 # Kill mavproxy firste
 PID=$(pgrep -f "mavproxy.py")
-kill -9 "$PID"
+kill -9 $PID
 
 
 # Checkpoint ardupilot
 PID=$(pidof arducopter)
-echo "Ardupilot task ID is: $PID"
-~/Gecko/checkpoint_restore/criu/criu dump -t "$PID" -D /tmp --shell-job
+echo "Ardupilot task ID is:"
+echo $PID
+sudo ~/Gecko/checkpoint_restore/criu/criu dump -t $PID -D /tmp --shell-job
 
 echo "Initialized version is checkpointed, then you can launch the mission."
