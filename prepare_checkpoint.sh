@@ -64,5 +64,16 @@ sleep 15
 ## Start the mission
 tmux send-keys -t "$SESSION_NAME:0.1" "mode auto" C-m
 
-echo "Attaching to tmux session '$SESSION_NAME'..."
-tmux attach-session -t "$SESSION_NAME"
+sleep 30
+
+# Kill mavproxy firste
+PID=$(pgrep -f "mavproxy.py")
+kill -9 "$PID"
+
+
+# Checkpoint ardupilot
+PID=$(pidof arducopter)
+echo "Ardupilot task ID is: $PID"
+~/Gecko/checkpoint_restore/criu/criu dump -t "$PID" -D /tmp --shell-job
+
+echo "Initialized version is checkpointed, then you can launch the mission."
